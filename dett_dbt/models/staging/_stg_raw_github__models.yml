@@ -1,0 +1,56 @@
+models:
+  - name: stg_raw_github__commits
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [repo, sha]
+    columns:
+      - name: repo
+        data_tests:
+          - not_null
+      - name: sha
+        data_tests:
+          - not_null
+      - name: committed_at
+        data_tests:
+        - not_null
+
+  - name: stg_raw_github__forks
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [repo, id]
+    columns:
+      - name: repo 
+        data_tests:
+          - not_null
+      - name: id
+        data_tests:
+          - not_null
+
+  - name: stg_raw_github__releases
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [repo, id]
+    columns:
+      - name: repo
+        data_tests:
+          - not_null
+      - name: id
+        data_tests:
+          - not_null
+
+
+  - name: stg_raw_github__stargazers_history
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [repo, week]
+    columns:
+      - name: repo
+        data_tests:
+          - not_null
+      - name: week
+        data_tests:
+          - not_null

@@ -1,0 +1,10 @@
+sources:
+  - name: raw_github
+
+    database: data-engineering-tool-trends
+    schema: raw_github
+    tables:
+      - name: commits
+      - name: forks
+      - name: releases
+      - name: stargazers_history
