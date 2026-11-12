@@ -6,7 +6,10 @@ from urllib3 import Retry
 from google.cloud import bigquery
 from google.api_core.exceptions import NotFound
 from dotenv import load_dotenv
-load_dotenv()
+from pathlib import Path
+
+env_path = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(dotenv_path=env_path)
 
 from repositories import GITHUB_REPOS, ENDPOINTS
 
