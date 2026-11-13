@@ -1,0 +1,11 @@
+repo,tool_name,category
+apache/airflow,Airflow,orchestration
+dagster-io/dagster,Dagster,orchestration
+PrefectHQ/prefect,Prefect,orchestration
+dbt-labs/dbt-core,dbt Core,transformation
+SQLMesh/sqlmesh,SQLMesh,transformation
+hashicorp/terraform,Terraform,infrastructure_as_code
+opentofu/opentofu,OpenTofu,infrastructure_as_code
+apache/spark,Spark,processing_engine
+duckdb/duckdb,DuckDB,processing_engine
+pola-rs/polars,Polars,processing_engine

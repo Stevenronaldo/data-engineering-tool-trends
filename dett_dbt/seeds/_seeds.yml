@@ -1,0 +1,30 @@
+seeds:
+  - name: repo_labels
+    description: "Hand-maintained lookup giving each tracked GitHub repo a display name and a category."
+    config:
+      column_types:
+        repo: string
+        tool_name: string
+        category: string
+    columns:
+      - name: repo
+        description: "GitHub owner/name, matches the repo column in raw_github."
+        data_tests:
+          - unique
+          - not_null
+      - name: tool_name
+        description: "Display name used in the dashboard."
+        data_tests:
+          - unique
+          - not_null
+      - name: category
+        description: "Group used to compare similar tools."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - orchestration
+                  - transformation
+                  - infrastructure_as_code
+                  - processing_engine
