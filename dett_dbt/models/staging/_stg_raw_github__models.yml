@@ -8,6 +8,10 @@ models:
       - name: repo
         data_tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('repo_labels')
+                field: repo
       - name: sha
         data_tests:
           - not_null
@@ -24,7 +28,14 @@ models:
       - name: repo 
         data_tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('repo_labels')
+                field: repo
       - name: id
+        data_tests:
+          - not_null
+      - name: created_at
         data_tests:
           - not_null
 
@@ -37,12 +48,16 @@ models:
       - name: repo
         data_tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('repo_labels')
+                field: repo
       - name: id
         data_tests:
           - not_null
 
 
-  - name: stg_raw_github__stargazers_history
+  - name: stg_raw_github__stargazers
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -51,6 +66,13 @@ models:
       - name: repo
         data_tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('repo_labels')
+                field: repo
       - name: week
+        data_tests:
+          - not_null
+      - name: star_count
         data_tests:
           - not_null

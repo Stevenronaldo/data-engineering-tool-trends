@@ -8,8 +8,8 @@ ranked as (
 
     select
         repo,
-        week,
-        total as total_star,
+        timestamp_seconds(week) as week,
+        total as star_count,
         loaded_at,
         row_number() over (
             partition by repo, week
@@ -22,7 +22,7 @@ ranked as (
 select
     repo,
     week,
-    total_star,
+    star_count,
     loaded_at
 from ranked
 where row_num = 1
