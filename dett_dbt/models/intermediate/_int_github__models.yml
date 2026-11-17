@@ -59,3 +59,26 @@ models:
               arguments:
                 min_value: 0
 
+  - name: int_calendar
+    description: "One row per repo and Sunday-start week (UTC), from the repo's first week of any activity to the newest week in the data. The last row can be the current, unfinished week unless filtered downstream."
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [repo, week]
+    columns:
+      - name: repo
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('repo_labels')
+                field: repo
+      - name: week
+        data_tests:
+          - not_null
+          - dbt_utils.sequential_values:
+              arguments:
+                interval: 7
+                datepart: day
+                group_by_columns: [repo]
+

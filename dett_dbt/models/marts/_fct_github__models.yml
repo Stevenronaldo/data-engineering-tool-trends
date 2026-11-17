@@ -1,0 +1,96 @@
+models:
+  - name: fct_repo_weekly
+    description: "One row per tracked repo per complete week (Sunday start, UTC). Weeks with no activity are kept as zeros. The current, unfinished week is excluded."
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [repo, week]
+    columns:
+      - name: repo
+        description: "GitHub owner/name."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('repo_labels')
+                field: repo
+      - name: tool_name
+        description: "Display name from the repo_labels seed."
+        data_tests:
+          - not_null
+      - name: category
+        description: "Group used to compare similar tools."
+        data_tests:
+          - not_null
+      - name: week
+        description: "Start of the week, a Sunday at 00:00 UTC."
+        data_tests:
+          - not_null
+      - name: star_count
+        description: "New stars gained in the week."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: cumulative_stars
+        description: "Running total of new stars since the first week of the calendar."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: commits_count
+        description: "Commits dated in the week, by committer date."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: cumulative_commits
+        description: "Running total of commits since the first week of the calendar."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: forks_count
+        description: "New forks created in the week. Counts only forks that still exist."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: cumulative_forks
+        description: "Running total of forks since the first week of the calendar. Counts only forks that still exist, so it is not GitHub's official fork count."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: stable_release_count
+        description: "Stable (non-prerelease) releases published in the week."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: prerelease_count
+        description: "Prereleases published in the week."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: weeks_since_first_star
+        description: "Weeks since the repo's first week with a star. Negative before it, 0 at it. Use for growth comparisons between tools."
+      - name: weeks_since_first_commit
+        description: "Weeks since the repo's first week with a commit. Negative before it, 0 at it. Imported history can make this much larger than the public age."
+      - name: weeks_since_first_release
+        description: "Weeks since the first week with a stable release. Null for a repo that has none."
+      - name: first_star_week
+        description: "The repo's first week with a star. The same value on every row of the repo."
+      - name: first_commit_week
+        description: "The repo's first week with a commit. The same value on every row of the repo."
+      - name: first_release_week
+        description: "The repo's first week with a stable release. Null for a repo that has none."
