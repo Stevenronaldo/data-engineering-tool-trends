@@ -66,6 +66,10 @@ with
                 rows between unbounded preceding and current row
             ) as cumulative_stars,
             commits_count,
+            sum(commits_count) over (
+                partition by repo order by week
+                rows between unbounded preceding and current row
+            ) as cumulative_commits,
             forks_count,
             sum(forks_count) over (
                 partition by repo order by week
