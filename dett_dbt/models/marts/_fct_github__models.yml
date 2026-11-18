@@ -47,13 +47,6 @@ models:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
-      - name: cumulative_commits
-        description: "Running total of commits since the first week of the calendar."
-        data_tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              arguments:
-                min_value: 0
       - name: forks_count
         description: "New forks created in the week. Counts only forks that still exist."
         data_tests:
@@ -94,3 +87,123 @@ models:
         description: "The repo's first week with a commit. The same value on every row of the repo."
       - name: first_release_week
         description: "The repo's first week with a stable release. Null for a repo that has none."
+
+  - name: fct_repo_summary
+    description: "One row per tracked repo with current totals, growth windows, latest activity dates and release cadence. Totals and windows are measured up to the last complete week in fct_repo_weekly (see as_of_week). Latest commit and release dates come from staging, so they are current."
+    data_tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('repo_labels')
+    columns:
+      - name: repo
+        description: "GitHub owner/name."
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('repo_labels')
+                field: repo
+      - name: tool_name
+        description: "Display name from the repo_labels seed."
+        data_tests:
+          - not_null
+      - name: category
+        description: "Group used to compare similar tools."
+        data_tests:
+          - not_null
+      - name: as_of_week
+        description: "Start of the last complete week included in the totals and windows. Should be the same for every repo."
+        data_tests:
+          - not_null
+      - name: stars_total
+        description: "Total stars up to as_of_week, as a running sum of weekly new stars. Close to GitHub's number, not identical, because people un-star."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: forks_total
+        description: "Total forks created up to as_of_week. Counts only forks that still exist, so it is not GitHub's official fork count."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: stars_last_52w
+        description: "New stars in the last 52 complete weeks."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: stars_growth_rate_52w
+        description: "Stars gained in the last 52 weeks divided by the stars held at the start of that period, as a fraction (0.25 = 25%). Null when the repo had no stars at the start. Favors small tools; compare with stars_last_52w."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: stars_last_12w
+        description: "New stars in the last 12 complete weeks."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: stars_prev_12w
+        description: "New stars in the 12 weeks before the last 12."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: stars_change_12w
+        description: "stars_last_12w minus stars_prev_12w. Positive means growth is speeding up, negative means slowing down. Can be negative by design."
+        data_tests:
+          - not_null
+      - name: commits_last_12w
+        description: "Commits in the last 12 complete weeks, by committer date."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: commits_last_52w
+        description: "Commits in the last 52 complete weeks, by committer date."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: forks_last_52w
+        description: "New forks in the last 52 complete weeks. Counts only forks that still exist."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: stable_releases_last_52w
+        description: "Stable (non-prerelease) releases in the last 52 complete weeks. Read it together with the cadence columns."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: latest_commit_at
+        description: "Timestamp of the newest commit, from staging, including the current week."
+        data_tests:
+          - not_null
+      - name: latest_stable_release_at
+        description: "Timestamp of the newest stable release, from staging. Null for a repo with no stable release."
+      - name: avg_days_between_releases
+        description: "Average days between consecutive stable releases over the whole history. Null for a repo with fewer than two stable releases."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: avg_days_between_releases_52w
+        description: "The same average, using only releases in the last 52 weeks. Null when there is no such release with a previous one."
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
