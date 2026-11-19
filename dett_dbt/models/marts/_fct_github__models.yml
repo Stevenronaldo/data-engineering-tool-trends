@@ -75,6 +75,13 @@ models:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
+      - name: cumulative_releases
+        description: "Running total of releases since the first week of the calendar. Counts only stable release"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: prerelease_count
         description: "Prereleases published in the week."
         data_tests:
@@ -139,6 +146,13 @@ models:
                 min_value: 0
       - name: forks_total
         description: "Total forks created up to as_of_week. Counts only forks that still exist, so it is not GitHub's official fork count."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: releases_total
+        description: "Total releases created up to as_of_week. Counts only stable releases"
         data_tests:
           - not_null
           - dbt_utils.accepted_range:

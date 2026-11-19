@@ -27,7 +27,8 @@ with
             week as as_of_week,
             cumulative_stars as stars_total,
             cumulative_forks as forks_total,
-            cumulative_commits as commits_total
+            cumulative_commits as commits_total,
+            cumulative_releases as releases_total
         from ranked
         where rn = 1
     ),
@@ -83,6 +84,7 @@ select
     l.stars_total,
     l.commits_total,
     l.forks_total,
+    l.releases_total,
     w.stars_last_52w,
     safe_divide(w.stars_last_52w, l.stars_total - w.stars_last_52w) as stars_growth_rate_52w,
     w.stars_last_12w,

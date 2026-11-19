@@ -76,6 +76,10 @@ with
                 rows between unbounded preceding and current row
             ) as cumulative_forks,
             stable_release_count,
+            sum(stable_release_count) over (
+                partition by repo order by week
+                rows between unbounded preceding and current row
+            ) as cumulative_releases,
             prerelease_count,
             first_star_week,
             div(timestamp_diff(week, first_star_week, day), 7) as weeks_since_first_star,
