@@ -1,5 +1,6 @@
 models:
   - name: int_commits_weekly
+    description: "One row per repo and week with activity only. Zero-filling happens later, against int_calendar."
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -13,6 +14,7 @@ models:
           - not_null
 
   - name: int_forks_weekly
+    description: "One row per repo and week with activity only. Zero-filling happens later, against int_calendar."
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -26,6 +28,7 @@ models:
           - not_null
 
   - name: int_releases_weekly
+    description: "One row per repo and week with activity only. Zero-filling happens later, against int_calendar."
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -39,6 +42,7 @@ models:
           - not_null
 
   - name: int_release_gaps
+    description: "One row per stable release, with the days since the previous stable release."
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:

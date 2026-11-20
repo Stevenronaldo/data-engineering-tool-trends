@@ -34,21 +34,21 @@ models:
               arguments:
                 min_value: 0
       - name: cumulative_stars
-        description: "Running total of new stars since the first week of the calendar."
+        description: "Running total of new stars since the first week of the calendar. Use Max, not Sum, when grouping."
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
       - name: commits_count
-        description: "Commits dated in the week, by committer date."
+        description: "Commits dated in the week, by committer date. {{ doc('commits_include_merge_bot') }}"
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
       - name: cumulative_commits
-        description: "Running total of commits since the first week of the calendar."
+        description: "Running total of commits since the first week of the calendar. Use Max, not Sum, when grouping. {{ doc('commits_include_merge_bot') }}"
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
@@ -62,21 +62,21 @@ models:
               arguments:
                 min_value: 0
       - name: cumulative_forks
-        description: "Running total of forks since the first week of the calendar. Counts only forks that still exist, so it is not GitHub's official fork count."
+        description: "Running total of forks since the first week of the calendar. Counts only forks that still exist, so it is not GitHub's official fork count. Use Max, not Sum, when grouping."
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
       - name: stable_release_count
-        description: "Stable (non-prerelease) releases published in the week."
+        description: "Stable (non-prerelease) releases published in the week. {{ doc('spark_no_releases') }}"
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
       - name: cumulative_releases
-        description: "Running total of releases since the first week of the calendar. Counts only stable release"
+        description: "Running total of stable (non-prerelease) releases since the first week of the calendar. Use Max, not Sum, when grouping. {{ doc('spark_no_releases') }}"
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
@@ -90,17 +90,17 @@ models:
               arguments:
                 min_value: 0
       - name: weeks_since_first_star
-        description: "Weeks since the repo's first week with a star. Negative before it, 0 at it. Use for growth comparisons between tools."
+        description: "Weeks since the repo's first week with a star. Negative before it, 0 at it. Filter to 0 or higher for age-aligned charts, and use it for growth comparisons between tools."
       - name: weeks_since_first_commit
         description: "Weeks since the repo's first week with a commit. Negative before it, 0 at it. Imported history can make this much larger than the public age."
       - name: weeks_since_first_release
-        description: "Weeks since the first week with a stable release. Null for a repo that has none."
+        description: "Weeks since the first week with a stable release. {{ doc('spark_no_releases') }}"
       - name: first_star_week
         description: "The repo's first week with a star. The same value on every row of the repo."
       - name: first_commit_week
         description: "The repo's first week with a commit. The same value on every row of the repo."
       - name: first_release_week
-        description: "The repo's first week with a stable release. Null for a repo that has none."
+        description: "The repo's first week with a stable release. {{ doc('spark_no_releases') }}"
 
   - name: fct_repo_summary
     description: "One row per tracked repo with current totals, growth windows, latest activity dates and release cadence. Totals and windows are measured up to the last complete week in fct_repo_weekly (see as_of_week). Latest commit and release dates come from staging, so they are current."
@@ -127,7 +127,7 @@ models:
         data_tests:
           - not_null
       - name: as_of_week
-        description: "Start of the last complete week included in the totals and windows. Should be the same for every repo."
+        description: "Start of the last complete week included in the totals and windows. The same for every repo, enforced by a test."
         data_tests:
           - not_null
       - name: stars_total
@@ -138,7 +138,7 @@ models:
               arguments:
                 min_value: 0
       - name: commits_total
-        description: "Total commits in the loaded history up to as_of_week, as a running sum of weekly commits by committer date. Counts every commit, including merge and bot commits, so it measures development volume and not team size. Includes history imported into GitHub, so it can reach back before the repo's public life."
+        description: "Total commits in the loaded history up to as_of_week, as a running sum of weekly commits by committer date. {{ doc('commits_include_merge_bot') }} Includes history imported into GitHub, so it can reach back before the repo's public life."
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
@@ -152,7 +152,7 @@ models:
               arguments:
                 min_value: 0
       - name: releases_total
-        description: "Total releases created up to as_of_week. Counts only stable releases"
+        description: "Total stable (non-prerelease) releases created up to as_of_week. {{ doc('spark_no_releases') }}"
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
@@ -190,14 +190,14 @@ models:
         data_tests:
           - not_null
       - name: commits_last_12w
-        description: "Commits in the last 12 complete weeks, by committer date."
+        description: "Commits in the last 12 complete weeks, by committer date. {{ doc('commits_include_merge_bot') }}"
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
       - name: commits_last_52w
-        description: "Commits in the last 52 complete weeks, by committer date."
+        description: "Commits in the last 52 complete weeks, by committer date. {{ doc('commits_include_merge_bot') }}"
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
@@ -222,9 +222,9 @@ models:
         data_tests:
           - not_null
       - name: latest_stable_release_at
-        description: "Timestamp of the newest stable release, from staging. Null for a repo with no stable release."
+        description: "Timestamp of the newest stable release, from staging. Null for a repo with no stable release. {{ doc('spark_no_releases') }}"
       - name: avg_days_between_releases
-        description: "Average days between consecutive stable releases over the whole history. Null for a repo with fewer than two stable releases."
+        description: "Average days between consecutive stable releases over the whole history. Null for a repo with fewer than two stable releases. {{ doc('spark_no_releases') }}"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
