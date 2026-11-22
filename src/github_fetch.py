@@ -65,6 +65,9 @@ session.headers.update({
 PROJECT = os.getenv("GCP_PROJECT")
 DATASET = os.getenv("BQ_DATASET")
 
+if not PROJECT or not DATASET:
+    raise RuntimeError("GCP_PROJECT and BQ_DATASET must be set")
+
 SINCE_MARGIN = timedelta(days=1)  # Margin to avoid missing data due to time zone differences
 
 client = bigquery.Client(project=PROJECT)
@@ -150,8 +153,12 @@ for endpoint, per_page, schema, date_column, write_mode in ENDPOINTS:
     with open(file_path, "rb") as f:
         job = client.load_table_from_file(f, table_id, job_config=job_config)
     job.result()
-    if job.output_rows == written:
-        print(f"-----Successfully loaded {written} rows into {table_id}-----")
-        os.remove(file_path)
-    else:
-        print(f"-----Row mismatch: file {written}, loaded {job.output_rows}. Keeping {file_path} for inspection.-----")
+
+    if job.output_rows != written:
+        raise RuntimeError(
+            f"Row mismatch for {table_id}: file has {written} rows, "
+            f"BigQuery loaded {job.output_rows}."
+        )
+    
+print(f"-----Successfully loaded {written} rows into {table_id}-----")
+os.remove(file_path)
