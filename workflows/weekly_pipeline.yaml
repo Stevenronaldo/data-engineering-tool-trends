@@ -1,0 +1,25 @@
+main:
+  steps:
+    - init:
+        assign:
+          - project_id: "data-engineering-tool-trends"
+          - location: "asia-southeast1"
+
+    - run_loader:
+        call: googleapis.run.v2.projects.locations.jobs.run
+        args:
+          name: ${"projects/" + project_id + "/locations/" + location + "/jobs/dett-loader"}
+          connector_params:
+            timeout: 2000
+        result: loader_result
+
+    - run_dbt:
+        call: googleapis.run.v2.projects.locations.jobs.run
+        args:
+          name: ${"projects/" + project_id + "/locations/" + location + "/jobs/dett-dbt"}
+          connector_params:
+            timeout: 1200
+        result: dbt_result
+
+    - finish:
+        return: "dett-loader and dett-dbt both finished successfully"
