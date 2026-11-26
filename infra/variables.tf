@@ -8,3 +8,8 @@ variable "gcp_project_id" {
   description = "GCP project id"
   type        = string
 }
+
+variable "alert_email" {
+  description = "email used for notification and alert"
+  type        = string
+}
