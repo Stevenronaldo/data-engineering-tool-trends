@@ -1,1 +1,2 @@
 gcp_project_id = <YOUR-PROJECT-ID>
+alert_email    = <YOUR-EMAIL>
