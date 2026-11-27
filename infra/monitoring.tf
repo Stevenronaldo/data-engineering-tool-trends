@@ -49,13 +49,3 @@ resource "google_monitoring_alert_policy" "weekly_failed" {
     content   = "The weekly pipeline failed. Open Workflows, then dett-weekly, then Executions, and open the newest run to see which step failed"
   }
 }
-
-import {
-  to = google_monitoring_notification_channel.email
-  id = "projects/data-engineering-tool-trends/notificationChannels/8636603684146396598"
-}
-
-import {
-  to = google_monitoring_alert_policy.weekly_failed
-  id = "projects/data-engineering-tool-trends/alertPolicies/15957482546609389910"
-}

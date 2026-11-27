@@ -100,13 +100,3 @@ resource "google_cloud_run_v2_job" "dbt" {
     ]
   }
 }
-
-import {
-  to = google_cloud_run_v2_job.loader
-  id = "projects/data-engineering-tool-trends/locations/asia-southeast1/jobs/dett-loader"
-}
-
-import {
-  to = google_cloud_run_v2_job.dbt
-  id = "projects/data-engineering-tool-trends/locations/asia-southeast1/jobs/dett-dbt"
-}

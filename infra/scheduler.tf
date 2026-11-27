@@ -30,8 +30,3 @@ resource "google_cloud_scheduler_job" "weekly_trigger" {
     }
   }
 }
-
-import {
-  to = google_cloud_scheduler_job.weekly_trigger
-  id = "projects/data-engineering-tool-trends/locations/asia-southeast1/jobs/dett-weekly-trigger"
-}
